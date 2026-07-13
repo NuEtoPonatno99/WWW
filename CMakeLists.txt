@@ -15,8 +15,10 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
 
-# Создаем исполняемый файл
-add_executable(${PROJECT_NAME} src/main.cpp)
+# Создаем исполняемый файл и указываем зависимости
+add_executable(${PROJECT_NAME} 
+    src/main.cpp
+    src/Debug/logger.cpp)
 
 # Линкуем проект с библиотеками
 target_link_libraries(${PROJECT_NAME} glfw glad)
