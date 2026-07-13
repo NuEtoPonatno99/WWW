@@ -13,13 +13,17 @@ int main(void)
 {
     glfwSetErrorCallback(error_callback);
     if (!glfwInit()){
-        cout << "glfwInit failed!";
+        cout << "glfwInit failed!" << endl;
         return -1;
     }
-    /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window)
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    GLFWwindow* window = glfwCreateWindow(640, 480, "WW", NULL, NULL);
+    if (!window)//окно не открылось
     {
+        cout << "glfwCreateWindow failed!" << endl;
         glfwTerminate();
         return -1;
     }
@@ -29,20 +33,24 @@ int main(void)
         cout << "Cant load GLAD" << endl;
         return -1;
     }
-    cout << "OpenGL " << GLVersion.major << "." << GLVersion.minor << endl;
+    //иниц переменных
+    double time = glfwGetTime();
+
 
     glClearColor(0.75, .75, 0.75, 1);
+    glfwSwapInterval(-1);//адаптивн буферизация
 
+    if (glfwGetError(NULL) != GLFW_NO_ERROR) 
+    {
+        glfwSwapInterval(1);//обычная буферизация
+    }
     //основной цикл рендеринга
     while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
-        /* Poll for and process events */
         glfwPollEvents();
     }
 
