@@ -4,10 +4,12 @@
 #include <iostream>
 #include <string>
 //кастом завис
-#include "Debug/logger.h"
+#include "Debug/callback.h"
 
 using namespace std;
 
+int g_xSizeWindow = 640;
+int g_ySizeWindow = 420;
 
 int main(void)
 {
@@ -20,13 +22,16 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "WW", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(g_xSizeWindow, g_ySizeWindow, "WW", NULL, NULL);
     if (!window)//окно не открылось
     {
         cout << "glfwCreateWindow failed!" << endl;
         glfwTerminate();
         return -1;
     }
+    glfwSetWindowSizeCallback(window, glfw_windowsize_callback); //регулирует размер
+    glfwSetKeyCallback(window, glfw_key_callback);//инпуты
+
     glfwMakeContextCurrent(window);
 
     if(!gladLoadGL()){

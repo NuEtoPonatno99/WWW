@@ -18,7 +18,7 @@ add_subdirectory(external/glad)
 # Создаем исполняемый файл и указываем зависимости
 add_executable(${PROJECT_NAME} 
     src/main.cpp
-    src/Debug/logger.cpp)
+    src/Debug/callback.cpp)
 
 # Линкуем проект с библиотеками
 target_link_libraries(${PROJECT_NAME} glfw glad)
