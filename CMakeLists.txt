@@ -16,9 +16,11 @@ add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
 
 # Создаем исполняемый файл и указываем зависимости
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME} WIN32
     src/main.cpp
-    src/Debug/callback.cpp)
+    src/Debug/callback.cpp
+    src/Renderer/Renderer.cpp
+    src/Renderer/Renderer.h)
 
 # Линкуем проект с библиотеками
 target_link_libraries(${PROJECT_NAME} glfw glad)

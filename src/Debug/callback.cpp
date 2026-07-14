@@ -1,4 +1,5 @@
 #include "callback.h"
+#include "../Renderer/Renderer.h"
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -6,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 using namespace std;
+
 
 void error_callback(int error, const char *descr){
     filesystem::create_directories("../logs");
@@ -16,7 +18,12 @@ void error_callback(int error, const char *descr){
     cerr << "[GLFW Error " << error << "]: " << descr << endl; 
 }
 void glfw_windowsize_callback(GLFWwindow* window, int width, int height){
-    glViewport(0, 0, width, height);
+    Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    if(renderer){
+        renderer->resize(width, height);
+        renderer->render();
+        glfwSwapBuffers(window);
+    }
 }
 
 void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
