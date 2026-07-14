@@ -15,7 +15,6 @@ void error_callback(int error, const char *descr){
     if(fail.is_open()){
         fail << "[GLFW Error " << error << "]: " << descr << endl;
     }
-    cerr << "[GLFW Error " << error << "]: " << descr << endl; 
 }
 void glfw_windowsize_callback(GLFWwindow* window, int width, int height){
     Renderer* renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
