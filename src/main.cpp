@@ -42,7 +42,7 @@ int main(void)
 
     //иниц переменных
     double time = glfwGetTime();
-    RenderW::Renderer renderer;
+    RenderW::RendererProg renderer;
 
     glfwSetWindowUserPointer(window, &renderer);
 

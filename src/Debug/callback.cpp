@@ -14,7 +14,7 @@ void error_callback(int error, const char *descr){
     }
 }
 void glfw_windowsize_callback(GLFWwindow* window, int width, int height){
-    auto* renderer = static_cast<RenderW::Renderer*>(glfwGetWindowUserPointer(window));
+    auto* renderer = static_cast<RenderW::RendererProg*>(glfwGetWindowUserPointer(window));
     if(renderer){
         renderer->resize(width, height);
         renderer->render();

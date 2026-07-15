@@ -6,17 +6,36 @@
 #include <GLFW/glfw3.h>
 
 namespace RenderW{
-    Renderer::Renderer(){
+    RendererProg::RendererProg(){
         initShaders();
         initGeometry();
     }
-    Renderer::~Renderer(){
+    RendererProg::~RendererProg(){
         glDeleteBuffers(1, &points_vbo);
         glDeleteBuffers(1, &colors_vbo);
         glDeleteVertexArrays(1, &vao);
         glDeleteProgram(shaders_program);
     }
-    void Renderer::initShaders(){
+    bool RendererProg::createShader(const std::string& source, const GLenum shaderType, GLuint& shaderID){
+        shaderID = glCreateShader(shaderType);
+        const char* code = source.c_str();
+        glShaderSource(shaderID, 1, &code, nullptr);
+        glCompileShader(shaderID);
+        GLint success;
+        glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+        if(!success){
+            GLchar infoLog[512];
+            glGetShaderInfoLog(shaderID, 512, nullptr, infoLog);
+            std::filesystem::create_directories("../logs");
+            std::ofstream fail("../logs/shaders_errors.txt", std::ios::app);
+            if(fail.is_open()){
+                fail << "ERROR:: " << shaderType << "::COMPILATION_FAILED\n" << infoLog << std::endl;
+            }
+            return false;
+        }
+        return true;
+    }
+    void RendererProg::initShaders(){
             const char* vertex_shader =
             "#version 460\n"
             "layout(location = 0) in vec3 vertex_position;"
@@ -34,44 +53,40 @@ namespace RenderW{
             "   frag_color = vec4(color, 1.0);"
             "}";
 
-            GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vs, 1, &vertex_shader, nullptr);
-            glCompileShader(vs);
-            GLint success;
-            glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-            if(!success){
-                GLchar infoLog[512];
-                glGetShaderInfoLog(vs, 512, nullptr, infoLog);
-                std::filesystem::create_directories("../logs");
-                std::ofstream fail("../logs/shaders_errors.txt", std::ios::app);
-                if(fail.is_open()){
-                    fail << "ERROR::VERTEX_SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
-                }
+            GLuint vShID;
+            if(!createShader(vertex_shader, GL_VERTEX_SHADER, vShID)){
+                return;
             }
-
-            GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fs, 1, &fragment_shader, nullptr);
-            glCompileShader(fs);
-            glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-            if(!success){
-                GLchar infoLog[512];
-                glGetShaderInfoLog(fs, 512, nullptr, infoLog);
-                std::filesystem::create_directories("../logs");
-                std::ofstream fail("../logs/shaders_errors.txt", std::ios::app);
-                if(fail.is_open()){
-                    fail << "ERROR::FRAGMENT_SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
-                }
+            GLuint fShID;
+            if(!createShader(fragment_shader, GL_FRAGMENT_SHADER, fShID)){
+                glDeleteShader(vShID);
+                return;
             }
 
             shaders_program = glCreateProgram();
-            glAttachShader(shaders_program, vs);
-            glAttachShader(shaders_program, fs);
+            glAttachShader(shaders_program, vShID);
+            glAttachShader(shaders_program, fShID);
             glLinkProgram(shaders_program);
-            glDeleteShader(vs);
-            glDeleteShader(fs);
+
+            GLint success;
+            glGetProgramiv(shaders_program, GL_LINK_STATUS, &success);
+            if(!success){
+                GLchar infoLog[512];
+                glGetProgramInfoLog(shaders_program, 512, nullptr, infoLog);
+                std::filesystem::create_directories("../logs");
+                std::ofstream fail("../logs/shaders_errors.txt", std::ios::app);
+                if(fail.is_open()){
+                    fail << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+                }
+            }
+            else{
+                isCompiled = true;
+            }
+            glDeleteShader(vShID);
+            glDeleteShader(fShID);
 
     }
-    void Renderer::initGeometry(){
+    void RendererProg::initGeometry(){
             //тр
             GLfloat points[9] = {
                 0.0f, 0.5f, 0.0f,
@@ -103,10 +118,10 @@ namespace RenderW{
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             //тр
     }
-    void Renderer::resize(int width, int height){
+    void RendererProg::resize(int width, int height){
         glViewport(0, 0, width, height);
     }
-    void Renderer::render(){
+    void RendererProg::render(){
         glClear(GL_COLOR_BUFFER_BIT);
         if(shaders_program != 0 && vao != 0){
             glUseProgram(shaders_program);
