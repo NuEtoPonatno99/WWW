@@ -7,8 +7,6 @@
 #include "Debug/callback.h"
 #include "Renderer/Renderer.h"
 
-using namespace std;
-
 int g_xSizeWindow = 640;
 int g_ySizeWindow = 420;
 
@@ -16,7 +14,7 @@ int main(void)
 {
     glfwSetErrorCallback(error_callback);
     if (!glfwInit()){
-        cout << "glfwInit failed!" << endl;
+        std::cout << "glfwInit failed!" << std::endl;
         return -1;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -26,7 +24,7 @@ int main(void)
     GLFWwindow* window = glfwCreateWindow(g_xSizeWindow, g_ySizeWindow, "WW", nullptr, nullptr);
     if (!window)//окно не открылось
     {
-        cout << "glfwCreateWindow failed!" << endl;
+        std::cout << "glfwCreateWindow failed!" << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -36,7 +34,7 @@ int main(void)
     glfwMakeContextCurrent(window);
 
     if(!gladLoadGL()){
-        cout << "Cant load GLAD" << endl;
+        std::cout << "Cant load GLAD" << std::endl;
         return -1;
     }
 

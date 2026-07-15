@@ -3,8 +3,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-using namespace std;
-
 class Renderer{
     private:
         GLuint shaders_program = 0;

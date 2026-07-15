@@ -5,8 +5,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-using namespace std;
-
 Renderer::Renderer(){
     initShaders();
     initGeometry();
@@ -43,10 +41,10 @@ void Renderer::initShaders(){
         if(!success){
             GLchar infoLog[512];
             glGetShaderInfoLog(vs, 512, nullptr, infoLog);
-            filesystem::create_directories("../logs");
-            ofstream fail("../logs/shaders_errors.txt", ios::app);
+            std::filesystem::create_directories("../logs");
+            std::ofstream fail("../logs/shaders_errors.txt", std::ios::app);
             if(fail.is_open()){
-                fail << "ERROR::VERTEX_SHADER::COMPILATION_FAILED\n" << infoLog << endl;
+                fail << "ERROR::VERTEX_SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
             }
         }
 
@@ -57,10 +55,10 @@ void Renderer::initShaders(){
         if(!success){
             GLchar infoLog[512];
             glGetShaderInfoLog(fs, 512, nullptr, infoLog);
-            filesystem::create_directories("../logs");
-            ofstream fail("../logs/shaders_errors.txt", ios::app);
+            std::filesystem::create_directories("../logs");
+            std::ofstream fail("../logs/shaders_errors.txt", std::ios::app);
             if(fail.is_open()){
-                fail << "ERROR::FRAGMENT_SHADER::COMPILATION_FAILED\n" << infoLog << endl;
+                fail << "ERROR::FRAGMENT_SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
             }
         }
 
