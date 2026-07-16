@@ -45,10 +45,11 @@ int main(int argc, char** argv)
     double time = glfwGetTime();
     {
         ResourceManager resourceManager(argv[0]);
-        auto DefaultShaderProgram = resourceManager.loadShaders("Def shader", "res/shaders/vertex_shader.txt", "res/shaders/fragment_shader.txt");
+        auto DefaultShaderProgram = resourceManager.loadShaders("DefShader", "res/shaders/vertex_shader.txt", "res/shaders/fragment_shader.txt");
         if(!DefaultShaderProgram){
             return -1;
         }
+        resourceManager.loadTexture("DefTexture", "res/textures/w_icon.png");
 
         glfwSetWindowUserPointer(window, &DefaultShaderProgram);
 

@@ -1,6 +1,8 @@
 #include "ResourceManager.h"
-#include <iostream>
 #include "../Renderer/Renderer.h"
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include "stb_image.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -48,6 +50,18 @@ std::shared_ptr<RenderW::RendererProg> ResourceManager::getShaderProgram(const s
     }
     ErrorLogRMan("Cant find the RendererProgram: " + shaderName);
     return nullptr;
+}
+void ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath){
+    int channels = 0;
+    int width;
+    int height;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* pixels = stbi_load(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels, 0);
+    if(!pixels){
+        ErrorLogRMan("Texture " + textureName + " cant load");
+        return;
+    }
+    stbi_image_free(pixels);
 }
 void ResourceManager::ErrorLogRMan(const std::string& textError){
     std::filesystem::create_directories("../logs");

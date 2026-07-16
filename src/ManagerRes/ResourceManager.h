@@ -26,4 +26,5 @@ class ResourceManager{
 
         std::shared_ptr<RenderW::RendererProg> loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath);
         std::shared_ptr<RenderW::RendererProg> getShaderProgram(const std::string& shaderName);
+        void loadTexture(const std::string& textureName, const std::string& texturePath);
 };
