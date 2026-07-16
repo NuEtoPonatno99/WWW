@@ -20,7 +20,10 @@ add_executable(${PROJECT_NAME} WIN32
     src/main.cpp
     src/Debug/callback.cpp
     src/Renderer/Renderer.cpp
-    src/Renderer/Renderer.h)
+    src/Renderer/Renderer.h
+    src/ManagerRes/ResourceManager.cpp
+    src/ManagerRes/ResourceManager.h
+    )
 
 # Стандарт плюсов
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)

@@ -6,15 +6,15 @@
 #include <GLFW/glfw3.h>
 
 namespace RenderW{
-    RendererProg::RendererProg(){
-        initShaders();
+    RendererProg::RendererProg(const std::string& vertexShader, const std::string& fragmentShader){
+        initShaders(vertexShader, fragmentShader);
         initGeometry();
     }
     RendererProg::~RendererProg(){
-        glDeleteBuffers(1, &points_vbo);
-        glDeleteBuffers(1, &colors_vbo);
-        glDeleteVertexArrays(1, &vao);
-        glDeleteProgram(shaders_program);
+        glDeleteBuffers(1, &m_points_vbo);
+        glDeleteBuffers(1, &m_colors_vbo);
+        glDeleteVertexArrays(1, &m_vao);
+        glDeleteProgram(m_shaders_program);
     }
     bool RendererProg::createShader(const std::string& source, const GLenum shaderType, GLuint& shaderID){
         shaderID = glCreateShader(shaderType);
@@ -35,24 +35,7 @@ namespace RenderW{
         }
         return true;
     }
-    void RendererProg::initShaders(){
-            const char* vertex_shader =
-            "#version 460\n"
-            "layout(location = 0) in vec3 vertex_position;"
-            "layout(location = 1) in vec3 vertex_color;"
-            "out vec3 color;"
-            "void main(){"
-            "   color = vertex_color;"
-            "   gl_Position = vec4(vertex_position, 1.0);"
-            "}";
-            const char* fragment_shader =
-            "#version 460\n"
-            "in vec3 color;"
-            "out vec4 frag_color;"
-            "void main(){"
-            "   frag_color = vec4(color, 1.0);"
-            "}";
-
+    void RendererProg::initShaders(std::string vertex_shader, std::string fragment_shader){
             GLuint vShID;
             if(!createShader(vertex_shader, GL_VERTEX_SHADER, vShID)){
                 return;
@@ -63,16 +46,16 @@ namespace RenderW{
                 return;
             }
 
-            shaders_program = glCreateProgram();
-            glAttachShader(shaders_program, vShID);
-            glAttachShader(shaders_program, fShID);
-            glLinkProgram(shaders_program);
+            m_shaders_program = glCreateProgram();
+            glAttachShader(m_shaders_program, vShID);
+            glAttachShader(m_shaders_program, fShID);
+            glLinkProgram(m_shaders_program);
 
             GLint success;
-            glGetProgramiv(shaders_program, GL_LINK_STATUS, &success);
+            glGetProgramiv(m_shaders_program, GL_LINK_STATUS, &success);
             if(!success){
                 GLchar infoLog[512];
-                glGetProgramInfoLog(shaders_program, 512, nullptr, infoLog);
+                glGetProgramInfoLog(m_shaders_program, 512, nullptr, infoLog);
                 std::filesystem::create_directories("../logs");
                 std::ofstream fail("../logs/shaders_errors.txt", std::ios::app);
                 if(fail.is_open()){
@@ -80,11 +63,10 @@ namespace RenderW{
                 }
             }
             else{
-                isCompiled = true;
+                m_isCompiled = true;
             }
             glDeleteShader(vShID);
             glDeleteShader(fShID);
-
     }
     void RendererProg::initGeometry(){
             //тр
@@ -98,21 +80,21 @@ namespace RenderW{
                 0.0f, 1.0f, 0.0f,
                 0.0f, 0.0f, 1.0f
             };
-            glGenVertexArrays(1, &vao);
-            glBindVertexArray(vao);
+            glGenVertexArrays(1, &m_vao);
+            glBindVertexArray(m_vao);
 
-            glGenBuffers(1, &points_vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+            glGenBuffers(1, &m_points_vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, m_points_vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-            glGenBuffers(1, &colors_vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+            glGenBuffers(1, &m_colors_vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, m_colors_vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
             glEnableVertexAttribArray(0);
-            glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, m_points_vbo);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
             glEnableVertexAttribArray(1);
-            glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, m_colors_vbo);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
             glBindVertexArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -123,10 +105,24 @@ namespace RenderW{
     }
     void RendererProg::render(){
         glClear(GL_COLOR_BUFFER_BIT);
-        if(shaders_program != 0 && vao != 0){
-            glUseProgram(shaders_program);
-            glBindVertexArray(vao);
+        if(m_shaders_program != 0 && m_vao != 0){
+            glUseProgram(m_shaders_program);
+            glBindVertexArray(m_vao);
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
+    }
+    RendererProg& RendererProg::operator = (RendererProg&& rendererProg) noexcept{
+        glDeleteProgram(m_shaders_program);
+        m_shaders_program = rendererProg.m_shaders_program;
+        m_isCompiled = rendererProg.m_isCompiled;
+        rendererProg.m_shaders_program = 0;
+        rendererProg.m_isCompiled = false;
+        return *this;
+    }
+    RendererProg::RendererProg(RendererProg&& rendererProg) noexcept{
+        m_shaders_program = rendererProg.m_shaders_program;
+        m_isCompiled = rendererProg.m_isCompiled;
+        rendererProg.m_shaders_program = 0;
+        rendererProg.m_isCompiled = false;
     }
 }

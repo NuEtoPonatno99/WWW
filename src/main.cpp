@@ -6,11 +6,12 @@
 //кастом завис
 #include "Debug/callback.h"
 #include "Renderer/Renderer.h"
+#include "ManagerRes/ResourceManager.h"
 
 int g_xSizeWindow = 640;
 int g_ySizeWindow = 420;
 
-int main(void)
+int main(int argc, char** argv)
 {
     glfwSetErrorCallback(error_callback);
     if (!glfwInit()){
@@ -42,26 +43,31 @@ int main(void)
 
     //иниц переменных
     double time = glfwGetTime();
-    RenderW::RendererProg renderer;
-
-    glfwSetWindowUserPointer(window, &renderer);
-
-    glfwSwapInterval(-1);//адаптивн буферизация
-
-    if (glfwGetError(NULL) != GLFW_NO_ERROR) 
     {
-        glfwSwapInterval(1);//обычная буферизация
+        ResourceManager resourceManager(argv[0]);
+        auto DefaultShaderProgram = resourceManager.loadShaders("Def shader", "res/shaders/vertex_shader.txt", "res/shaders/fragment_shader.txt");
+        if(!DefaultShaderProgram){
+            return -1;
+        }
+
+        glfwSetWindowUserPointer(window, &DefaultShaderProgram);
+
+        glfwSwapInterval(-1);//адаптивн буферизация
+
+        if (glfwGetError(NULL) != GLFW_NO_ERROR) 
+        {
+            glfwSwapInterval(1);//обычная буферизация
+        }
+        //основной цикл рендеринга
+        while (!glfwWindowShouldClose(window))
+        {
+            DefaultShaderProgram->render();
+
+            glfwSwapBuffers(window);
+
+            glfwPollEvents();
+        }
     }
-    //основной цикл рендеринга
-    while (!glfwWindowShouldClose(window))
-    {
-        renderer.render();
-
-        glfwSwapBuffers(window);
-
-        glfwPollEvents();
-    }
-
     glfwTerminate();
     return 0;
 }
