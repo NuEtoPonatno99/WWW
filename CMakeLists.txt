@@ -22,5 +22,18 @@ add_executable(${PROJECT_NAME} WIN32
     src/Renderer/Renderer.cpp
     src/Renderer/Renderer.h)
 
+# Стандарт плюсов
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+
 # Линкуем проект с библиотеками
 target_link_libraries(${PROJECT_NAME} glfw glad)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# Копирование ресурсов в папку с проектом
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
+)
