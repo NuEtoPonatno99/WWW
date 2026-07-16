@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME} WIN32
     src/Renderer/Renderer.h
     src/ManagerRes/ResourceManager.cpp
     src/ManagerRes/ResourceManager.h
+    src/ManagerRes/stb_image.h
     )
 
 # Стандарт плюсов
