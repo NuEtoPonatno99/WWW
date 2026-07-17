@@ -1,5 +1,6 @@
 #include "ResourceManager.h"
 #include "../Renderer/Renderer.h"
+#include "../Renderer/Texture2D.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
 #include "stb_image.h"
@@ -51,7 +52,7 @@ std::shared_ptr<RenderW::RendererProg> ResourceManager::getShaderProgram(const s
     ErrorLogRMan("Cant find the RendererProgram: " + shaderName);
     return nullptr;
 }
-void ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath){
+std::shared_ptr<RenderW::Texture2D> ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath){
     int channels = 0;
     int width;
     int height;
@@ -59,9 +60,19 @@ void ResourceManager::loadTexture(const std::string& textureName, const std::str
     unsigned char* pixels = stbi_load(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels, 0);
     if(!pixels){
         ErrorLogRMan("Texture " + textureName + " cant load");
-        return;
+        return nullptr;
     }
+    std::shared_ptr<RenderW::Texture2D> newTexture = m_texturesMap.emplace(textureName, std::make_shared<RenderW::Texture2D>(width, height, pixels, channels, GL_NEAREST, GL_REPEAT)).first->second;
     stbi_image_free(pixels);
+    return newTexture;
+}
+std::shared_ptr<RenderW::Texture2D> ResourceManager::getTexture(const std::string& textureName){
+    TexturesMap::const_iterator it = m_texturesMap.find(textureName);
+    if(it != m_texturesMap.end()){
+        return it->second;
+    }
+    ErrorLogRMan("Cant find the texture: " + textureName);
+    return nullptr;
 }
 void ResourceManager::ErrorLogRMan(const std::string& textError){
     std::filesystem::create_directories("../logs");

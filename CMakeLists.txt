@@ -24,6 +24,8 @@ add_executable(${PROJECT_NAME} WIN32
     src/ManagerRes/ResourceManager.cpp
     src/ManagerRes/ResourceManager.h
     src/ManagerRes/stb_image.h
+    src/Renderer/Texture2D.cpp
+    src/Renderer/Texture2D.h
     )
 
 # Стандарт плюсов
