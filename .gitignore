@@ -3,6 +3,12 @@ logs
 WW.png
 locTex
 
+# glm
+external/glm/doc/
+external/glm/test/
+external/glm/cmake/
+external/glm/util/
+
 # Prerequisites
 *.d
 
