@@ -35,6 +35,9 @@ namespace RenderW{
         }
         return true;
     }
+    void RendererProg::setInt(const std::string name, const GLint value){
+        glUniform1i(glGetUniformLocation(m_shaders_program, name.c_str()), value);
+    }
     void RendererProg::initShaders(std::string vertex_shader, std::string fragment_shader){
             GLuint vShID;
             if(!createShader(vertex_shader, GL_VERTEX_SHADER, vShID)){
@@ -70,15 +73,20 @@ namespace RenderW{
     }
     void RendererProg::initGeometry(){
             //тр
-            GLfloat points[9] = {
+            GLfloat points[] = {
                 0.0f, 0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
                 -0.5f, -0.5f, 0.0f
             };
-            GLfloat colors[9] = {
+            GLfloat colors[] = {
                 1.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f,
                 0.0f, 0.0f, 1.0f
+            };
+            GLfloat texture[] = {
+                0.5f, 1.0f,
+                1.0f, 0.0f,
+                0.0f, 0.0f
             };
             glGenVertexArrays(1, &m_vao);
             glBindVertexArray(m_vao);
@@ -89,6 +97,9 @@ namespace RenderW{
             glGenBuffers(1, &m_colors_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_colors_vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+            glGenBuffers(1, &m_texture_vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, m_texture_vbo);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(texture), texture, GL_STATIC_DRAW);
 
             glEnableVertexAttribArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, m_points_vbo);
@@ -96,6 +107,9 @@ namespace RenderW{
             glEnableVertexAttribArray(1);
             glBindBuffer(GL_ARRAY_BUFFER, m_colors_vbo);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+            glEnableVertexAttribArray(2);
+            glBindBuffer(GL_ARRAY_BUFFER, m_texture_vbo);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
             glBindVertexArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             //тр

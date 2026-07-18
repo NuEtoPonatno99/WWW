@@ -7,6 +7,7 @@
 #include "Debug/callback.h"
 #include "Renderer/Renderer.h"
 #include "ManagerRes/ResourceManager.h"
+#include "Renderer/Texture2D.h"
 
 int g_xSizeWindow = 640;
 int g_ySizeWindow = 420;
@@ -49,12 +50,13 @@ int main(int argc, char** argv)
         if(!DefaultShaderProgram){
             return -1;
         }
-        resourceManager.loadTexture("DefTexture", "res/textures/w_icon.png");
+        auto tex = resourceManager.loadTexture("DefTexture", "res/textures/www.png");
+        DefaultShaderProgram->render();
+        DefaultShaderProgram->setInt("tex", 0);//второй аргумент - номер слота текстуры
 
         glfwSetWindowUserPointer(window, &DefaultShaderProgram);
 
         glfwSwapInterval(-1);//адаптивн буферизация
-
         if (glfwGetError(NULL) != GLFW_NO_ERROR) 
         {
             glfwSwapInterval(1);//обычная буферизация
@@ -62,6 +64,7 @@ int main(int argc, char** argv)
         //основной цикл рендеринга
         while (!glfwWindowShouldClose(window))
         {
+            tex->bind();
             DefaultShaderProgram->render();
 
             glfwSwapBuffers(window);

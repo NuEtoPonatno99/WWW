@@ -10,6 +10,7 @@ namespace RenderW{
             GLuint m_vao = 0;
             GLuint m_points_vbo = 0;
             GLuint m_colors_vbo = 0;
+            GLuint m_texture_vbo = 0;
             bool m_isCompiled;
             void initShaders(std::string vertex_shader, std::string fragment_shader);
             void initGeometry();
@@ -25,6 +26,7 @@ namespace RenderW{
             RendererProg(RendererProg&& rendererProg) noexcept;
 
             bool isCompiled() const {return m_isCompiled;}
+            void setInt(const std::string name, const GLint value);
             void resize(int width, int height);
             void render();
     };
