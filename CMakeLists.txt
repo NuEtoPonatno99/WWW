@@ -11,9 +11,10 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
-# Подключаем папку с исходниками GLFW
+# Подключаем папку с исходниками библиотек
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
+add_subdirectory(external/glm)
 
 # Создаем исполняемый файл и указываем зависимости
 add_executable(${PROJECT_NAME} WIN32
@@ -28,6 +29,8 @@ add_executable(${PROJECT_NAME} WIN32
     src/Renderer/Texture2D.h
     )
 
+# Подключаем заголовочные файлы GLM (так как это header-only библиотека)
+target_include_directories(${PROJECT_NAME} PRIVATE external/glm)
 # Стандарт плюсов
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 

@@ -3,14 +3,14 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
+#include <glm/vec2.hpp>
 //кастом завис
 #include "Debug/callback.h"
 #include "Renderer/Renderer.h"
 #include "ManagerRes/ResourceManager.h"
 #include "Renderer/Texture2D.h"
 
-int g_xSizeWindow = 640;
-int g_ySizeWindow = 420;
+glm::ivec2 g_windSize(640, 480);
 
 int main(int argc, char** argv)
 {
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(g_xSizeWindow, g_ySizeWindow, "WW", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(g_windSize.x, g_windSize.y, "WW", nullptr, nullptr);
     if (!window)//окно не открылось
     {
         std::cout << "glfwCreateWindow failed!" << std::endl;
