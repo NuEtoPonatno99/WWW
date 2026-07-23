@@ -54,7 +54,7 @@ int main(int argc, char** argv)
         DefaultShaderProgram->render();
         DefaultShaderProgram->setInt("tex", 0);//второй аргумент - номер слота текстуры
 
-        glfwSetWindowUserPointer(window, &DefaultShaderProgram);
+        glfwSetWindowUserPointer(window, DefaultShaderProgram.get());
 
         glfwSwapInterval(-1);//адаптивн буферизация
         if (glfwGetError(NULL) != GLFW_NO_ERROR) 

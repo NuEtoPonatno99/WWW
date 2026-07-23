@@ -11,7 +11,7 @@ namespace RenderW{
             GLuint m_points_vbo = 0;
             GLuint m_colors_vbo = 0;
             GLuint m_texture_vbo = 0;
-            bool m_isCompiled;
+            bool m_isCompiled = false;
             void initShaders(std::string vertex_shader, std::string fragment_shader);
             void initGeometry();
             bool createShader(const std::string& source, const GLenum shaderType, GLuint& shaderID);
