@@ -91,27 +91,34 @@ namespace RenderW{
             glGenVertexArrays(1, &m_vao);
             glBindVertexArray(m_vao);
 
+
             glGenBuffers(1, &m_points_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_points_vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
             glGenBuffers(1, &m_colors_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_colors_vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
             glGenBuffers(1, &m_texture_vbo);
             glBindBuffer(GL_ARRAY_BUFFER, m_texture_vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(texture), texture, GL_STATIC_DRAW);
 
+
             glEnableVertexAttribArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, m_points_vbo);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
             glEnableVertexAttribArray(1);
             glBindBuffer(GL_ARRAY_BUFFER, m_colors_vbo);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
             glEnableVertexAttribArray(2);
             glBindBuffer(GL_ARRAY_BUFFER, m_texture_vbo);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-            glBindVertexArray(0);
+
             glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
             //тр
     }
     void RendererProg::resize(int width, int height){

@@ -27,6 +27,8 @@ add_executable(${PROJECT_NAME} WIN32
     src/ManagerRes/stb_image.h
     src/Renderer/Texture2D.cpp
     src/Renderer/Texture2D.h
+    src/Renderer/Sprite.cpp
+    src/Renderer/Sprite.h
     )
 
 # Подключаем заголовочные файлы GLM (так как это header-only библиотека)
