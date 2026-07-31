@@ -1,7 +1,7 @@
 #pragma once
-#include <glad/glad.h>;
-#include <glm/vec2.hpp>;
-#include <memory>;
+#include <glad/glad.h>
+#include <glm/vec2.hpp>
+#include <memory>
 
 namespace RenderW{
     class Texture2D;

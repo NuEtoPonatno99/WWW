@@ -1,6 +1,7 @@
 #include "ResourceManager.h"
 #include "../Renderer/Renderer.h"
 #include "../Renderer/Texture2D.h"
+#include "../Renderer/Sprite.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
 #include "stb_image.h"
@@ -72,6 +73,30 @@ std::shared_ptr<RenderW::Texture2D> ResourceManager::getTexture(const std::strin
         return it->second;
     }
     ErrorLogRMan("Cant find the texture: " + textureName);
+    return nullptr;
+}
+std::shared_ptr<RenderW::Sprite> ResourceManager::loadSprite(const std::string& spriteName,
+                                            const std::string& textureName,
+                                            const std::string& shaderName,
+                                            const unsigned int spriteWidth,
+                                            const unsigned int spriteHeight){
+    auto pTexture = getTexture(textureName);
+    if(!pTexture){
+        ErrorLogRMan("Texture " + textureName + " for the sprite " + spriteName + " cant load");
+    }
+    auto pShader = getShaderProgram(shaderName);
+    if(!pShader){
+        ErrorLogRMan("Shader " + shaderName + " for the sprite " + spriteName + " cant load");
+    }
+    std::shared_ptr<RenderW::Sprite> newSprite = m_spritesMap.emplace(textureName, std::make_shared<RenderW::Sprite>(pTexture, pShader, glm::vec2(0.f, 0.f), glm::vec2(spriteWidth, spriteHeight))).first->second;
+    return newSprite;
+}
+std::shared_ptr<RenderW::Sprite> ResourceManager::getSprite(const std::string& spriteName){
+    SpritesMap::const_iterator it = m_spritesMap.find(spriteName);
+    if(it != m_spritesMap.end()){
+        return it->second;
+    }
+    ErrorLogRMan("Cant find the sprite: " + spriteName);
     return nullptr;
 }
 void ResourceManager::ErrorLogRMan(const std::string& textError){

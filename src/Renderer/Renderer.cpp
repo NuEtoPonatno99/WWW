@@ -4,6 +4,7 @@
 #include <fstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace RenderW{
     RendererProg::RendererProg(const std::string& vertexShader, const std::string& fragmentShader){
@@ -34,9 +35,6 @@ namespace RenderW{
             return false;
         }
         return true;
-    }
-    void RendererProg::setInt(const std::string name, const GLint value){
-        glUniform1i(glGetUniformLocation(m_shaders_program, name.c_str()), value);
     }
     void RendererProg::initShaders(std::string vertex_shader, std::string fragment_shader){
             GLuint vShID;
@@ -74,9 +72,9 @@ namespace RenderW{
     void RendererProg::initGeometry(){
             //тр
             GLfloat points[] = {
-                0.0f, 0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f
+                0.0f, 0.50f, 0.0f,
+                0.50f, -0.50f, 0.0f,
+                -0.50f, -0.50f, 0.0f
             };
             GLfloat colors[] = {
                 1.0f, 0.0f, 0.0f,
@@ -131,6 +129,12 @@ namespace RenderW{
             glBindVertexArray(m_vao);
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
+    }
+    void RendererProg::setInt(const std::string name, const GLint value){
+        glUniform1i(glGetUniformLocation(m_shaders_program, name.c_str()), value);
+    }
+    void RendererProg::setMatrix4(const std::string& name, const glm::mat4& matrix){
+        glUniformMatrix4fv(glGetUniformLocation(m_shaders_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
     }
     RendererProg& RendererProg::operator = (RendererProg&& rendererProg) noexcept{
         glDeleteProgram(m_shaders_program);

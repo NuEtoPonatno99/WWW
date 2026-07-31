@@ -2,6 +2,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/mat4x4.hpp>
 
 namespace RenderW{
     class RendererProg{
@@ -27,6 +28,7 @@ namespace RenderW{
 
             bool isCompiled() const {return m_isCompiled;}
             void setInt(const std::string name, const GLint value);
+            void setMatrix4(const std::string& name, const glm::mat4& matrix);
             void resize(int width, int height);
             void render();
     };

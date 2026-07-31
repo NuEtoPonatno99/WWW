@@ -4,11 +4,14 @@
 #include <iostream>
 #include <string>
 #include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 //кастом завис
 #include "Debug/callback.h"
 #include "Renderer/Renderer.h"
 #include "ManagerRes/ResourceManager.h"
 #include "Renderer/Texture2D.h"
+#include "Renderer/Sprite.h"
 
 glm::ivec2 g_windSize(640, 480);
 
@@ -47,14 +50,30 @@ int main(int argc, char** argv)
     {
         ResourceManager resourceManager(argv[0]);
         auto DefaultShaderProgram = resourceManager.loadShaders("DefShader", "res/shaders/vertex_shader.txt", "res/shaders/fragment_shader.txt");
-        if(!DefaultShaderProgram){
+        auto DefaultSpriteProgram = resourceManager.loadShaders("SpriteShader", "res/shaders/Vsprite_shader.txt", "res/shaders/Fsprite_shader.txt");
+        if(!DefaultShaderProgram || !DefaultSpriteProgram){
             return -1;
         }
         auto tex = resourceManager.loadTexture("DefTexture", "res/textures/www.png");
+        auto spr = resourceManager.loadSprite("DefSprite", "DefTexture", "SpriteShader", 50, 100);
+        spr->setPosition(glm::vec2(300, 100));
+
         DefaultShaderProgram->render();
         DefaultShaderProgram->setInt("tex", 0);//второй аргумент - номер слота текстуры
 
+        DefaultSpriteProgram->render();
+        DefaultSpriteProgram->setInt("tex", 0);//второй аргумент - номер слота текстуры
+
+        glm::mat4 modelMatrix = glm::mat4(1.f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(100.f, 0.f, 0.f));
+
+        glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(g_windSize.x), 0.f, static_cast<float>(g_windSize.y), -100.f, 100.f);
+
         glfwSetWindowUserPointer(window, DefaultShaderProgram.get());
+
+        DefaultShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+        DefaultSpriteProgram->setMatrix4("projectionMat", projectionMatrix);
 
         glfwSwapInterval(-1);//адаптивн буферизация
         if (glfwGetError(NULL) != GLFW_NO_ERROR) 
@@ -65,7 +84,10 @@ int main(int argc, char** argv)
         while (!glfwWindowShouldClose(window))
         {
             tex->bind();
+            DefaultShaderProgram->setMatrix4("modelMat", modelMatrix);
             DefaultShaderProgram->render();
+
+            spr->render();
 
             glfwSwapBuffers(window);
 
