@@ -27,17 +27,18 @@ ResourceManager::ResourceManager(const std::string& executPath){
 }
 std::shared_ptr<RenderW::RendererProg> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath){
     std::string vertexString = GetFileString(vertexPath);
-    if(vertexPath.empty()){
+    if(vertexString.empty()){
         ErrorLogRMan(vertexPath + " shader is empty\n");
         return nullptr;
     }
     std::string fragmentString = GetFileString(fragmentPath);
-    if(fragmentPath.empty()){
+    if(fragmentString.empty()){
         ErrorLogRMan(fragmentPath + " shader is empty\n");
         return nullptr;
     }
     std::shared_ptr<RenderW::RendererProg>& newShader = m_rendProg.emplace(shaderName, std::make_shared<RenderW::RendererProg>(vertexString, fragmentString)).first->second;
     if(newShader->isCompiled()){
+        newShader->initGeometry();
         return newShader;
     }
     else{
@@ -88,7 +89,7 @@ std::shared_ptr<RenderW::Sprite> ResourceManager::loadSprite(const std::string& 
     if(!pShader){
         ErrorLogRMan("Shader " + shaderName + " for the sprite " + spriteName + " cant load");
     }
-    std::shared_ptr<RenderW::Sprite> newSprite = m_spritesMap.emplace(textureName, std::make_shared<RenderW::Sprite>(pTexture, pShader, glm::vec2(0.f, 0.f), glm::vec2(spriteWidth, spriteHeight))).first->second;
+    std::shared_ptr<RenderW::Sprite> newSprite = m_spritesMap.emplace(spriteName, std::make_shared<RenderW::Sprite>(pTexture, pShader, glm::vec2(0.f, 0.f), glm::vec2(spriteWidth, spriteHeight))).first->second;
     return newSprite;
 }
 std::shared_ptr<RenderW::Sprite> ResourceManager::getSprite(const std::string& spriteName){

@@ -49,11 +49,14 @@ int main(int argc, char** argv)
     double time = glfwGetTime();
     {
         ResourceManager resourceManager(argv[0]);
+        static RenderW::WindowShaders shaderContainer;
         auto DefaultShaderProgram = resourceManager.loadShaders("DefShader", "res/shaders/vertex_shader.txt", "res/shaders/fragment_shader.txt");
         auto DefaultSpriteProgram = resourceManager.loadShaders("SpriteShader", "res/shaders/Vsprite_shader.txt", "res/shaders/Fsprite_shader.txt");
         if(!DefaultShaderProgram || !DefaultSpriteProgram){
             return -1;
         }
+        shaderContainer.geometryShader = DefaultShaderProgram;
+        shaderContainer.spriteShader = DefaultSpriteProgram;
         auto tex = resourceManager.loadTexture("DefTexture", "res/textures/www.png");
         auto spr = resourceManager.loadSprite("DefSprite", "DefTexture", "SpriteShader", 50, 100);
         spr->setPosition(glm::vec2(300, 100));
@@ -65,11 +68,13 @@ int main(int argc, char** argv)
         DefaultSpriteProgram->setInt("tex", 0);//второй аргумент - номер слота текстуры
 
         glm::mat4 modelMatrix = glm::mat4(1.f);
-        modelMatrix = glm::translate(modelMatrix, glm::vec3(100.f, 0.f, 0.f));
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(200.f, 200.f, 0.f));
+
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(150.f, 150.f, 1.f));
 
         glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(g_windSize.x), 0.f, static_cast<float>(g_windSize.y), -100.f, 100.f);
 
-        glfwSetWindowUserPointer(window, DefaultShaderProgram.get());
+        glfwSetWindowUserPointer(window, &shaderContainer); // сюда все шейдеры
 
         DefaultShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
@@ -83,6 +88,7 @@ int main(int argc, char** argv)
         //основной цикл рендеринга
         while (!glfwWindowShouldClose(window))
         {
+            glClear(GL_COLOR_BUFFER_BIT);
             tex->bind();
             DefaultShaderProgram->setMatrix4("modelMat", modelMatrix);
             DefaultShaderProgram->render();

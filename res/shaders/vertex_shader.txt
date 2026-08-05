@@ -11,5 +11,5 @@ uniform mat4 projectionMat;
 void main(){
     color = vertex_color;
     textureCoords = texture_coords;
-    gl_Position = modelMat * projectionMat * vec4(vertex_position, 1.0);
+    gl_Position = projectionMat * modelMat * vec4(vertex_position, 1.0);
 }

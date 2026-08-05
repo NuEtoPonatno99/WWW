@@ -9,11 +9,12 @@
 namespace RenderW{
     RendererProg::RendererProg(const std::string& vertexShader, const std::string& fragmentShader){
         initShaders(vertexShader, fragmentShader);
-        initGeometry();
+        //initGeometry();
     }
     RendererProg::~RendererProg(){
         glDeleteBuffers(1, &m_points_vbo);
         glDeleteBuffers(1, &m_colors_vbo);
+        glDeleteBuffers(1, &m_texture_vbo);
         glDeleteVertexArrays(1, &m_vao);
         glDeleteProgram(m_shaders_program);
     }
@@ -70,7 +71,77 @@ namespace RenderW{
             glDeleteShader(fShID);
     }
     void RendererProg::initGeometry(){
-            //тр
+        Triangle();
+    }
+    void RendererProg::resize(int width, int height){
+        glViewport(0, 0, width, height);
+    }
+    void RendererProg::render(){
+        if(m_shaders_program != 0 && m_vao != 0){
+            glUseProgram(m_shaders_program);
+            glBindVertexArray(m_vao);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
+    }
+    void RendererProg::setInt(const std::string name, const GLint value){
+        glUniform1i(glGetUniformLocation(m_shaders_program, name.c_str()), value);
+    }
+    void RendererProg::setMatrix4(const std::string& name, const glm::mat4& matrix){
+        glUniformMatrix4fv(glGetUniformLocation(m_shaders_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+    GLuint RendererProg::getProgID(){
+        return m_shaders_program;
+    }
+    RendererProg& RendererProg::operator = (RendererProg&& rendererProg) noexcept {
+        if (this != &rendererProg) {
+            glDeleteProgram(m_shaders_program);
+            glDeleteVertexArrays(1, &m_vao);
+            glDeleteBuffers(1, &m_points_vbo);
+            glDeleteBuffers(1, &m_colors_vbo);
+            glDeleteBuffers(1, &m_texture_vbo);
+
+            m_shaders_program = rendererProg.m_shaders_program;
+            m_isCompiled = rendererProg.m_isCompiled;
+            m_vao = rendererProg.m_vao;
+            m_points_vbo = rendererProg.m_points_vbo;
+            m_colors_vbo = rendererProg.m_colors_vbo;
+            m_texture_vbo = rendererProg.m_texture_vbo;
+
+            rendererProg.m_shaders_program = 0;
+            rendererProg.m_vao = 0;
+            rendererProg.m_points_vbo = 0;
+            rendererProg.m_colors_vbo = 0;
+            rendererProg.m_texture_vbo = 0;
+            rendererProg.m_isCompiled = false;
+        }
+        return *this;
+    }
+    RendererProg::RendererProg(RendererProg&& rendererProg) noexcept {
+        m_shaders_program = rendererProg.m_shaders_program;
+        m_isCompiled = rendererProg.m_isCompiled;
+        m_vao = rendererProg.m_vao;
+        m_points_vbo = rendererProg.m_points_vbo;
+        m_colors_vbo = rendererProg.m_colors_vbo;
+        m_texture_vbo = rendererProg.m_texture_vbo;
+
+        rendererProg.m_shaders_program = 0;
+        rendererProg.m_vao = 0;
+        rendererProg.m_points_vbo = 0;
+        rendererProg.m_colors_vbo = 0;
+        rendererProg.m_texture_vbo = 0;
+        rendererProg.m_isCompiled = false;
+    }
+
+
+
+
+
+
+
+
+
+
+    void RendererProg::Triangle(){
             GLfloat points[] = {
                 0.0f, 0.50f, 0.0f,
                 0.50f, -0.50f, 0.0f,
@@ -117,37 +188,5 @@ namespace RenderW{
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
-            //тр
-    }
-    void RendererProg::resize(int width, int height){
-        glViewport(0, 0, width, height);
-    }
-    void RendererProg::render(){
-        glClear(GL_COLOR_BUFFER_BIT);
-        if(m_shaders_program != 0 && m_vao != 0){
-            glUseProgram(m_shaders_program);
-            glBindVertexArray(m_vao);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-        }
-    }
-    void RendererProg::setInt(const std::string name, const GLint value){
-        glUniform1i(glGetUniformLocation(m_shaders_program, name.c_str()), value);
-    }
-    void RendererProg::setMatrix4(const std::string& name, const glm::mat4& matrix){
-        glUniformMatrix4fv(glGetUniformLocation(m_shaders_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
-    }
-    RendererProg& RendererProg::operator = (RendererProg&& rendererProg) noexcept{
-        glDeleteProgram(m_shaders_program);
-        m_shaders_program = rendererProg.m_shaders_program;
-        m_isCompiled = rendererProg.m_isCompiled;
-        rendererProg.m_shaders_program = 0;
-        rendererProg.m_isCompiled = false;
-        return *this;
-    }
-    RendererProg::RendererProg(RendererProg&& rendererProg) noexcept{
-        m_shaders_program = rendererProg.m_shaders_program;
-        m_isCompiled = rendererProg.m_isCompiled;
-        rendererProg.m_shaders_program = 0;
-        rendererProg.m_isCompiled = false;
     }
 }

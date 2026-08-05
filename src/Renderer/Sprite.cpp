@@ -66,7 +66,7 @@ namespace RenderW{
         }
 
         void Sprite::render() const{
-            m_RendererProg->render();
+            glUseProgram(m_RendererProg->getProgID());
             glm::mat4 model(1.0f);
             model = glm::translate(model, glm::vec3(m_pos, 0.f));
             model = glm::translate(model, glm::vec3(0.5f * m_size.x, 0.5f * m_size.y, 0.f));
